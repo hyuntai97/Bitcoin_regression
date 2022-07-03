@@ -2,6 +2,7 @@ from dataloader import get_dataloader
 from model import *
 from train import ModelTrain
 from evaluate import ModelTest
+from utils import generate_serial_number
 
 import torch
 import argparse
@@ -13,7 +14,7 @@ import pickle
 def config_args(parser):    
     # directory
     parser.add_argument('--datadir', type=str, default='../dataset', help='data directory')
-    parser.add_argument('--logdir',type=str, default='../logs', help='logs directory')
+    parser.add_argument('--logdir',type=str, default='./logs', help='logs directory')
     parser.add_argument('--savedir',type=str, default='../save', help='save directory')
     
     # data
@@ -45,8 +46,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='time series forcasting')
     args = config_args(parser)
 
+    # save directory
+    SN = generate_serial_number()
+    SAVE_DIR = os.path.join(f'{args.logdir}/{SN}')
+    os.makedirs(SAVE_DIR, exist_ok=True)
+
     # save arguments
-    json.dump(vars(args), open(os.path.join(args.logdir,'arguments.json'),'w'), indent=4)
+    json.dump(vars(args), open(os.path.join(SAVE_DIR,'arguments.json'),'w'), indent=4)
 
     # set seed
 
@@ -80,9 +86,9 @@ if __name__ == '__main__':
     )
 
     # save history 
-    pickle.dump(modeltrain.history, open(os.path.join(args.logdir, 'train_history.pkl'),'wb'))
+    pickle.dump(modeltrain.history, open(os.path.join(SAVE_DIR, 'train_history.pkl'),'wb'))
     # save model 
-    torch.save(modeltrain.model.state_dict(), os.path.join(args.logdir, 'model.pth'))         
+    torch.save(modeltrain.model.state_dict(), os.path.join(SAVE_DIR, 'model.pth'))         
 
     # test
     modeltest = ModelTest(
@@ -93,9 +99,9 @@ if __name__ == '__main__':
         args.metric,
         args.input_window,
         args.output_window,
-        args.logdir)
+        SAVE_DIR)
                         
     # save history 
-    pickle.dump(modeltest.history, open(os.path.join(args.logdir, 'test_history.pkl'),'wb'))
+    pickle.dump(modeltest.history, open(os.path.join(SAVE_DIR, 'test_history.pkl'),'wb'))
     
     

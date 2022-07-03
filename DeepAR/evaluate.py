@@ -5,6 +5,7 @@ import numpy as np
 from tqdm import tqdm 
 import matplotlib.pyplot as plt 
 from utils import *
+import os
 
 
 class ModelTest:
@@ -42,6 +43,10 @@ class ModelTest:
 
 
     def test(self):
+        # save directory
+        save_directory = f'{self.log_dir}/predict_img'
+        os.makedirs(save_directory, exist_ok=True)
+
         self.model.eval()
 
         loss_lst = []
@@ -90,7 +95,7 @@ class ModelTest:
                 plt.xlabel("Periods")
                 plt.ylabel("Y")
                 # plt.show()
-                plt.savefig(f'./{self.log_dir}/deepar_pred_{i}.png')
+                plt.savefig(f'{save_directory}/deepar_pred_{i}.png')
                 plt.clf() # Clear the current figure            
             
         return loss_lst

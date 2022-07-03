@@ -1,6 +1,6 @@
 {
     "datadir": "../dataset",
-    "logdir": "../logs",
+    "logdir": "./logs",
     "savedir": "../save",
     "dataname": "upbit_ohlcv_1700.csv",
     "target_feature": "open",
@@ -9,12 +9,8 @@
     "stride": 1,
     "train_rate": 0.8,
     "batch_size": 64,
-    "epochs": 100,
+    "epochs": 800,
     "lr": 0.001,
-    "embedding_size": 10,
-    "hidden_size": 50,
-    "num_layers": 1,
-    "likelihood": "g",
-    "n_samples": 20,
+    "hidden_layer_units": 128,
     "metric": "MAPE"
 }
