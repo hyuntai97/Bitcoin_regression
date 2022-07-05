@@ -27,7 +27,7 @@ def config_args(parser):
     parser.add_argument('--batch_size', type=int, default=64, help='number of batch')
 
     # train options
-    parser.add_argument('--epochs', type=int, default=100, help='number of epochs')
+    parser.add_argument('--epochs', type=int, default=1000, help='number of epochs')
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
     parser.add_argument('--hidden_layer_units', type=int, default=128, help='number of hidden layer units')
     parser.add_argument('--metric', type=str, default='MAPE', help='test metric')
@@ -46,7 +46,7 @@ if __name__ == '__main__':
 
     # save directory
     SN = generate_serial_number()
-    SAVE_DIR = os.path.join(f'{args.logdir}/{SN}')
+    SAVE_DIR = os.path.join(f'{args.logdir}/{SN}_{args.dataname}_{args.epochs}_{args.output_window}')
     os.makedirs(SAVE_DIR, exist_ok=True)
 
     # save arguments

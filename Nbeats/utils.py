@@ -26,6 +26,6 @@ def MAPEval(y_pred, y_true):
 def generate_serial_number():
     string_pool = string.ascii_lowercase + string.digits
     result = ''
-    for i in range(7):
+    for i in range(3):
         result += random.choice(string_pool)
     return result
