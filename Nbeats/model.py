@@ -22,7 +22,8 @@ class NBeatsNet(nn.Module):
                  thetas_dim=(4, 8),
                  share_weights_in_stack=False,
                  hidden_layer_units=256,
-                 nb_harmonics=None):
+                 nb_harmonics=None,
+                 dropout_rate=0.3):
         super(NBeatsNet, self).__init__()
         self.forecast_length = forecast_length
         self.backcast_length = backcast_length
@@ -30,6 +31,7 @@ class NBeatsNet(nn.Module):
         self.nb_blocks_per_stack = nb_blocks_per_stack
         self.share_weights_in_stack = share_weights_in_stack
         self.nb_harmonics = nb_harmonics
+        self.dropout_rate = dropout_rate
         self.stack_types = stack_types
         self.stacks = []
         self.thetas_dim = thetas_dim
@@ -127,7 +129,7 @@ def linear_space(backcast_length, forecast_length, is_forecast=True):
 class Block(nn.Module):
 
     def __init__(self, units, thetas_dim, device, backcast_length=10, forecast_length=5, share_thetas=False,
-                 nb_harmonics=None):
+                 nb_harmonics=None, dropout_rate=0.3):
         super(Block, self).__init__()
         self.units = units
         self.thetas_dim = thetas_dim
@@ -138,6 +140,7 @@ class Block(nn.Module):
         self.fc2 = nn.Linear(units, units)
         self.fc3 = nn.Linear(units, units)
         self.fc4 = nn.Linear(units, units)
+        self.dropout = nn.Dropout(dropout_rate)  # dropout 추가 => 랜덤성 부여 효과를 볼 수 있음.  
         self.device = device
         self.backcast_linspace = linear_space(backcast_length, forecast_length, is_forecast=False)
         self.forecast_linspace = linear_space(backcast_length, forecast_length, is_forecast=True)
@@ -150,8 +153,11 @@ class Block(nn.Module):
     def forward(self, x):
         x = squeeze_last_dim(x)
         x = F.relu(self.fc1(x.to(self.device)))
+        x = self.dropout(x)  # add dropout 
         x = F.relu(self.fc2(x))
+        x = self.dropout(x)  # add dropout 
         x = F.relu(self.fc3(x))
+        x = self.dropout(x)  # add dropout 
         x = F.relu(self.fc4(x))
         return x
 

@@ -31,6 +31,9 @@ def config_args(parser):
     parser.add_argument('--lr', type=float, default=1e-3, help='learning rate')
     parser.add_argument('--hidden_layer_units', type=int, default=128, help='number of hidden layer units')
     parser.add_argument('--metric', type=str, default='MAPE', help='test metric')
+    parser.add_argument('--dropout_rate', type=float, default=0.3, help='dropout ratio')
+    parser.add_argument('--n_samples', type=int, default=30, help='number of samples to make prediction confidence interval')
+
 
     args = parser.parse_args()
 
@@ -70,6 +73,7 @@ if __name__ == '__main__':
                     forecast_length=args.output_window,
                     backcast_length=args.input_window,
                     hidden_layer_units=args.hidden_layer_units,
+                    dropout_rate=args.dropout_rate
                     )
 
     # optimizer
@@ -94,6 +98,7 @@ if __name__ == '__main__':
         test_dataloader,
         yscaler,
         args.metric,
+        args.n_samples,
         args.input_window,
         args.output_window,
         SAVE_DIR)
