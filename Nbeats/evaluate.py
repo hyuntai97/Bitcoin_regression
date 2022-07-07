@@ -74,13 +74,13 @@ class ModelTest:
                 trend_forecast = trend_forecast.squeeze(0).detach().cpu().numpy()
                 seasonal_forecast = seasonal_forecast.squeeze(0).detach().cpu().numpy()
 
-                pred = self.yscaler.inverse_transform(y_pred)
-                y_test = self.yscaler.inverse_transform(y_test)
-                x_test = self.yscaler.inverse_transform(x_test)
+                pred = self.yscaler.inverse_transform(y_pred.reshape(-1,1))
+                y_test = self.yscaler.inverse_transform(y_test.reshape(-1,1))
+                x_test = self.yscaler.inverse_transform(x_test.reshape(-1,1))
                 true = np.concatenate([x_test, y_test])
                 
-                trend_forecast = self.yscaler.inverse_transform(trend_forecast)
-                seasonal_forecast = self.yscaler.inverse_transform(seasonal_forecast)
+                trend_forecast = self.yscaler.inverse_transform(trend_forecast.reshape(-1,1))
+                seasonal_forecast = self.yscaler.inverse_transform(seasonal_forecast.reshape(-1,1))
 
                 if n == 0:
                     # metric option 

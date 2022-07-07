@@ -19,7 +19,7 @@ def config_args(parser):
     
     # data
     parser.add_argument('--dataname', type=str, default='upbit_ohlcv_1700.csv', help='dataset name')
-    parser.add_argument('--target_feature', type=str, default='open', help='the target feature')
+    parser.add_argument('--target_feature', type=str, default='close', help='the target feature')
     parser.add_argument('--input_window', type=int, default=50, help='input window size')
     parser.add_argument('--output_window', type=int, default=25, help='output window size')
     parser.add_argument('--stride', type=int, default=1, help='stride size')
@@ -34,7 +34,9 @@ def config_args(parser):
     parser.add_argument('--dropout_rate', type=float, default=0.3, help='dropout ratio')
     parser.add_argument('--n_samples', type=int, default=30, help='number of samples to make prediction confidence interval')
 
-
+    # save memo 
+    parser.add_argument('--memo', type=str, default='실험', help='simple memo of experiment')
+    
     args = parser.parse_args()
 
     return args
@@ -46,7 +48,7 @@ if __name__ == '__main__':
 
     # save directory
     SN = generate_serial_number()
-    SAVE_DIR = os.path.join(f'{args.logdir}/{SN}_{args.dataname}_{args.epochs}_{args.output_window}')
+    SAVE_DIR = os.path.join(f'{args.logdir}/{SN}_{args.dataname}_{args.epochs}_{args.output_window}_{args.memo}')
     os.makedirs(SAVE_DIR, exist_ok=True)
 
     # save arguments
@@ -64,6 +66,9 @@ if __name__ == '__main__':
                                                         output_window=args.output_window,
                                                         train_rate=args.train_rate,
                                                         stride=args.stride)  
+
+    # save scaler
+    pickle.dump(yscaler, open(os.path.join(SAVE_DIR, 'scaler.pkl'),'wb'))
 
     # build model
     now_device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

@@ -153,11 +153,11 @@ class Block(nn.Module):
     def forward(self, x):
         x = squeeze_last_dim(x)
         x = F.relu(self.fc1(x.to(self.device)))
-        x = self.dropout(x)  # add dropout 
+        # x = self.dropout(x)  # add dropout 
         x = F.relu(self.fc2(x))
         x = self.dropout(x)  # add dropout 
         x = F.relu(self.fc3(x))
-        x = self.dropout(x)  # add dropout 
+        # x = self.dropout(x)  # add dropout 
         x = F.relu(self.fc4(x))
         return x
 

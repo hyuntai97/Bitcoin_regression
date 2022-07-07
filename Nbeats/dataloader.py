@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from dataset import WindowDataset
 from utils import MeanScaler
-
+from sklearn.preprocessing import StandardScaler
 
 def get_dataloader(target_feature, data_root, data_name, batch_size, input_window, output_window, train_rate, stride=1):
     '''
@@ -21,7 +21,7 @@ def get_dataloader(target_feature, data_root, data_name, batch_size, input_windo
     data = pd.read_csv(data_path, parse_dates=['index'])
     data.rename(columns={'index':'date'}, inplace=True)
 
-    data = data[['date', 'open']]
+    data = data[['date', target_feature]]
     data.set_index('date', inplace=True)
 
     # train / test split
@@ -31,12 +31,12 @@ def get_dataloader(target_feature, data_root, data_name, batch_size, input_windo
     data_te = data.iloc[train_periods:, :]
 
     # scaling 
-    yscaler = MeanScaler()
-    tmp = yscaler.fit_transform(data_tr['open'])
-    data_tr['open'] = tmp
+    yscaler = StandardScaler()
+    tmp = yscaler.fit_transform(np.array(data_tr[target_feature]).reshape(-1,1))
+    data_tr[target_feature] = tmp
 
-    tmp = yscaler.transform(data_te['open'])
-    data_te['open'] = tmp
+    tmp = yscaler.transform(np.array(data_te[target_feature]).reshape(-1,1))
+    data_te[target_feature] = tmp
 
     custom_dataset = WindowDataset(data_te, input_window, output_window, stride=stride)
     test_dataloader = DataLoader(custom_dataset, 1)         
